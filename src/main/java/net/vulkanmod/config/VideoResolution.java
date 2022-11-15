@@ -32,7 +32,7 @@ public class VideoResolution {
         return this.width + " x " + this.height;
     }
 
-    public VideoMode getVideoMode() {
+    public VideoMode getVideoMode(VideoResolution[] videoResolutions) {
         VideoMode videoMode;
         for(VideoResolution resolution : videoResolutions) {
             if(this.width == resolution.width && this.height == resolution.height) return resolution.videoModes.get(0);

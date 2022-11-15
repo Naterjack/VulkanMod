@@ -20,13 +20,22 @@ public class Options {
     public static Option<?>[] getVideoOpts() {
         return new Option[] {
                 new CyclingOption<>("Resolution",
-                        VideoResolution.getVideoResolutions(),
+                        VMonitor.getMonitorsByIndex(config.monitorIndex).getVideoResolutions(),
                         resolution -> new LiteralText(resolution.toString()),
                         (value) -> {
                             config.resolution = value;
                             fullscreenDirty = true;
                         },
                         () -> config.resolution)
+                        .setTooltip(Text.of("Only works on fullscreen")),
+                new CyclingOption<>("Monitor",
+                        VMonitor.getMonitorIndicies(),
+                        monitorIndex -> new LiteralText(VMonitor.toString(monitorIndex)),
+                        (value) -> {
+                            config.monitorIndex = value;
+                            fullscreenDirty = true;
+                        },
+                        () -> config.monitorIndex)
                         .setTooltip(Text.of("Only works on fullscreen")),
                 new SwitchOption("Windowed Fullscreen",
                         value -> {

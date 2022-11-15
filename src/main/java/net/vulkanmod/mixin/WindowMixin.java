@@ -8,6 +8,7 @@ import net.minecraft.client.util.*;
 import net.vulkanmod.Initializer;
 import net.vulkanmod.config.Config;
 import net.vulkanmod.config.Options;
+import net.vulkanmod.config.VMonitor;
 import net.vulkanmod.config.VideoResolution;
 import net.vulkanmod.vulkan.VRenderSystem;
 import net.vulkanmod.vulkan.Vulkan;
@@ -146,16 +147,26 @@ public abstract class WindowMixin {
 
         Config config = Initializer.CONFIG;
 
-        long monitor =  GLFW.glfwGetWindowMonitor(this.handle);
-        monitor = GLFW.glfwGetPrimaryMonitor();
+        //long monitor =  GLFW.glfwGetWindowMonitor(this.handle);
+        //monitor = GLFW.glfwGetPrimaryMonitor();
+        int monitorIndex = config.monitorIndex;
+        if (monitorIndex >= VMonitor.getNumberConnectedMonitors()){
+            monitorIndex = 0;
+        }
+        VMonitor monitorObj = VMonitor.getMonitorsByIndex(monitorIndex);
+        long monitor = monitorObj.getPointer();
+        if (monitor == 0){
+           monitor = GLFW.glfwGetPrimaryMonitor();
+        }
+                    
 
         GLFWVidMode vidMode = GLFW.glfwGetVideoMode(monitor);
         if(this.fullscreen) {
             {
-                VideoMode videoMode = config.resolution.getVideoMode();
+                VideoMode videoMode = config.resolution.getVideoMode(monitorObj.getVideoResolutions());
                 if(videoMode == null) {
                     LOGGER.error("Not supported resolution, fallback to first supported");
-                    videoMode = VideoResolution.getVideoResolutions()[0].getVideoMode();
+                    videoMode = monitorObj.getVideoResolutions()[0].getVideoMode(monitorObj.getVideoResolutions());
                 }
                 if (MinecraftClient.IS_SYSTEM_MAC) {
                     MacWindowUtil.toggleFullscreen(this.handle);

@@ -24,6 +24,7 @@ public class Config {
     public VideoResolution resolution = VideoResolution.getFirstAvailable();
     public boolean windowedFullscreen = false;
     public boolean guiOptimizations = false;
+    public Integer monitorIndex = 0;
 
     private static Path path;
 
