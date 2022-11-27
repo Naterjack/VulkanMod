@@ -79,7 +79,12 @@ public abstract class VNativeImage {
         if (removeAlpha && this.format.hasAlpha()) {
             for (int i = 0; i < this.height; ++i) {
                 for (int j = 0; j < this.getWidth(); ++j) {
-                    this.setColor(j, i, this.getColor(j, i) | 255 << this.format.getAlphaOffset());
+                    int color = this.getColor(j, i) | 255 << this.format.getAlphaOffset();
+                    int cBlue = color >> 16 & 255;
+                    int cRed = color << 16;
+                    int cGreen = color & (255 << 8);
+                    color = cBlue | cRed | cGreen | (255 << 24);
+                    this.setColor(j, i, color);
                 }
             }
         }
